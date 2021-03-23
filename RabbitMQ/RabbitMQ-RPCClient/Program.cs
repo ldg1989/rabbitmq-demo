@@ -3,6 +3,7 @@ using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Threading;
 
 namespace RabbitMQ_RPCClient
 {
@@ -12,10 +13,14 @@ namespace RabbitMQ_RPCClient
     {
       var rpcClient = new RpcClient();
 
-      Console.WriteLine(" [x] Requesting fib(30)");
-      var response = rpcClient.Call("30");
+      for (int i = 5; i < 20; i++)
+      {
+        Console.WriteLine(" [x] Requesting fib(5)");
+        var response = rpcClient.Call("5");
+        Console.WriteLine(" [.] Got '{0}'", response);
 
-      Console.WriteLine(" [.] Got '{0}'", response);
+        Thread.Sleep(2000); 
+      } 
       rpcClient.Close();
     }
   } 

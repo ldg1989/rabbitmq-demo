@@ -15,7 +15,7 @@ namespace RabbitMQ_Routing
       var factory = new ConnectionFactory() { HostName = "localhost" };
       using (var connection = factory.CreateConnection())
       using (var channel = connection.CreateModel())
-      {
+      { 
         channel.ExchangeDeclare(exchange: "direct_logs",
                                 type: "direct");
 
