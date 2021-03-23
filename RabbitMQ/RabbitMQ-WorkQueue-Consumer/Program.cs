@@ -19,7 +19,7 @@ namespace RabbitMQ_WorkQueue_Consumer
                              exclusive: false,
                              autoDelete: false,
                              arguments: null);
-
+        //手动应答
         channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
         Console.WriteLine(" [*] Waiting for messages.");
@@ -38,6 +38,7 @@ namespace RabbitMQ_WorkQueue_Consumer
 
           // Note: it is possible to access the channel via
           //       ((EventingBasicConsumer)sender).Model here
+          //公平分发 应该改成手动应答
           channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
         };
         channel.BasicConsume(queue: "task_queue",

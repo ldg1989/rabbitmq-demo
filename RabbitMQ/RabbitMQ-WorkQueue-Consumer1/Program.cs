@@ -20,6 +20,7 @@ namespace RabbitMQ_WorkQueue_Consumer1
                              autoDelete: false,
                              arguments: null);
 
+        //每次从队列里获取的数据数为1，可以根据实际情况，调整大小
         channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
         Console.WriteLine(" [*] Waiting for messages.");
@@ -32,16 +33,17 @@ namespace RabbitMQ_WorkQueue_Consumer1
           Console.WriteLine(" [x] Received {0}", message);
 
           int dots = message.Split('.').Length - 1;
-          Thread.Sleep(dots * 1000);
+          Thread.Sleep(dots * 5000);
 
           Console.WriteLine(" [x] Done");
 
           // Note: it is possible to access the channel via
           //       ((EventingBasicConsumer)sender).Model here
+          //公平分发 应该改成手动应答
           channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
         };
         channel.BasicConsume(queue: "task_queue",
-                             autoAck: false,
+                             autoAck: false,//手动应答
                              consumer: consumer);
 
         Console.WriteLine(" Press [enter] to exit.");

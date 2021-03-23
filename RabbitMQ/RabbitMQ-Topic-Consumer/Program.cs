@@ -46,7 +46,7 @@ namespace RabbitMQ_Topic_Consumer
                             message);
         };
         channel.BasicConsume(queue: queueName,
-                             autoAck: true,
+                             autoAck: true,// 自动应答机制，建议改成 手动应答机制，如果为true 可能会造成死循环
                              consumer: consumer);
 
         Console.WriteLine(" Press [enter] to exit.");

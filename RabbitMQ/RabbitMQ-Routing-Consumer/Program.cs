@@ -14,7 +14,7 @@ namespace RabbitMQ_Routing_Consumer
       using (var connection = factory.CreateConnection())
       using (var channel = connection.CreateModel())
       {
-        channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
+        channel.ExchangeDeclare(exchange: "driect_message_exchange", type: "direct");
         var queueName = channel.QueueDeclare().QueueName;
 
         if (args.Length < 1)
@@ -28,7 +28,7 @@ namespace RabbitMQ_Routing_Consumer
 
         foreach (var severity in args)
         {
-          channel.QueueBind(queue: queueName, exchange: "direct_logs", routingKey: severity);
+          channel.QueueBind(queue: queueName, exchange: "driect_message_exchange", routingKey: severity);
         }
 
         Console.WriteLine(" [*] Waiting for messages.");

@@ -15,11 +15,23 @@ namespace RabbitMQ_Routing
       var factory = new ConnectionFactory() { HostName = "localhost" };
       using (var connection = factory.CreateConnection())
       using (var channel = connection.CreateModel())
-      { 
-        channel.ExchangeDeclare(exchange: "direct_logs",
-                                type: "direct");
+      {
+        string exchangeName = "driect_message_exchange";
+        string routingKey = "driect";
 
-        var severity = (args.Length > 0) ? args[0] : "info";
+        //声明一个交换机                       
+        channel.ExchangeDeclare(exchange: exchangeName,// 交换机的名字 
+                                    type: "direct", // 交换机的类型
+                                    true);// 是否持久化
+        //声明队列
+        channel.QueueDeclare(queue: "queue5", true, exclusive: false, autoDelete: false, null);
+
+        //绑定交换机与队列的关系
+        channel.QueueBind("queue5", exchangeName, routingKey, null);
+
+
+
+        var severity = (args.Length > 0) ? args[0] : routingKey;
         var message = (args.Length > 1)
                       ? string.Join(" ", args.Skip(1).ToArray())
                       : "Hello World!";
@@ -27,13 +39,13 @@ namespace RabbitMQ_Routing
 
         for (int i = 0; i < 100; i++)
         {
-          channel.BasicPublish(exchange: "direct_logs",
-                            routingKey: severity,
+          channel.BasicPublish(exchange: exchangeName,
+                            routingKey: severity,//路由key
                             basicProperties: null,
                             body: body);
           Console.WriteLine(" [x] Sent '{0}':'{1}'", severity, message);
           Thread.Sleep(2000);
-        }        
+        }
       }
 
       Console.WriteLine(" Press [enter] to exit.");
