@@ -2,6 +2,7 @@
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace RabbitMQ_Consumer
 {
@@ -13,11 +14,13 @@ namespace RabbitMQ_Consumer
       using (var connection = factory.CreateConnection())
       using (var channel = connection.CreateModel())
       {
-        channel.QueueDeclare(queue: "hello",
+        var arguments = new Dictionary<string, object>();
+        arguments.Add("x-dead-letter-exchange", 5000);//过期时间是5秒
+        channel.QueueDeclare(queue: "TTLQueue",
                              durable: false,
                              exclusive: false,
                              autoDelete: false,
-                             arguments: null);
+                             arguments: arguments);
 
         var consumer = new EventingBasicConsumer(channel);
         consumer.Received += (model, ea) =>
@@ -26,7 +29,7 @@ namespace RabbitMQ_Consumer
           var message = Encoding.UTF8.GetString(body);
           Console.WriteLine(" [x] Received {0}", message);
         };
-        channel.BasicConsume(queue: "hello",
+        channel.BasicConsume(queue: "TTLQueue",
                              autoAck: true,
                              consumer: consumer);
 

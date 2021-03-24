@@ -2,6 +2,9 @@
 using System;
 using System.Text;
 using System.Threading;
+using System.Collections.Generic;
+
+
 
 namespace RabbitMQ_Producer
 {
@@ -13,15 +16,26 @@ namespace RabbitMQ_Producer
       using (var connection = factory.CreateConnection())
       using (var channel = connection.CreateModel())
       {
-        channel.QueueDeclare(queue: "hello",// 通道
+        var arguments = new Dictionary<string, object>() ;
+        arguments.Add("x-dead-letter-exchange",5000);//过期时间是5秒
+
+        string exchangeName = "TTL-driect_message_exchange";
+       
+        //声明一个交换机                       
+        channel.ExchangeDeclare(exchange: exchangeName,// 交换机的名字 
+                                    type: "direct", // 交换机的类型
+                                    true);// 是否持久化
+   
+
+        channel.QueueDeclare(queue: "TTLQueue",// 通道
                              durable: false, //是否 持久化
                              exclusive: false,
                              autoDelete: false,
-                             arguments: null);
+                             arguments: arguments);
 
         string message = "Hello World!";
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 10; i++)
         {
           Thread.Sleep(2000);
           message = message + DateTime.Now;
