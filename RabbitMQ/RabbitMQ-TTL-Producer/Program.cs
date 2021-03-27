@@ -20,16 +20,16 @@ namespace RabbitMQ_Routing
       {
         var arguments = new Dictionary<string, object>();
         arguments.Add("x-message-ttl", 5000);//过期时间是5秒
+        arguments.Add("x-max-length", 8);//设置队列的最大数据长度
+        arguments.Add("x-dead-letter-exchange", "dead-exchange");// 死信队列的参数
+        arguments.Add("x-dead-letter-routing-key", "dead");//direct 路由设置 需要设置  fanout 不需要设置
 
-        arguments.Add("x-dead-letter-exchange", "dead-exchange-queue");//
-        arguments.Add("x-dead-letter-routing-key", "dead");//direct 需要设置  fanout 不需要设置
+        string exchangeName = "TTL-driect_message_exchange01";
+        string routingKey = "ttl01";
+        string queue = "normalQueue01";
 
-        string exchangeName = "TTL-driect_message_exchange";
-        string routingKey = "normalKey";
-        string queue = "normalQueue";
-
+        //创建死信队列
         CreateDead(channel, arguments);
-
 
         //声明一个交换机                       
         channel.ExchangeDeclare(exchangeName, "direct", durable: true, autoDelete: true, null);
@@ -71,7 +71,7 @@ namespace RabbitMQ_Routing
       //声明一个交换机                       
       channel.ExchangeDeclare("dead-exchange", "direct", durable: true, autoDelete: true, null);
       //声明队列
-      channel.QueueDeclare("dead-exchange-queue", durable: true, exclusive: false, autoDelete: true, arguments);
+      channel.QueueDeclare("dead-exchange-queue", durable: true, exclusive: false, autoDelete: true, null);
 
       //绑定交换机与队列的关系
       channel.QueueBind("dead-exchange-queue", "dead-exchange", routingKey: "dead");

@@ -14,7 +14,7 @@ namespace RabbitMQ_Routing_Consumer
       using (var connection = factory.CreateConnection())
       using (var channel = connection.CreateModel())
       {
-        channel.ExchangeDeclare(exchange: "driect_message_exchange", type: "direct");
+        channel.ExchangeDeclare(exchange: "driect_message_exchange", type: "ttl");
         var queueName = channel.QueueDeclare().QueueName;
 
         if (args.Length < 1)
